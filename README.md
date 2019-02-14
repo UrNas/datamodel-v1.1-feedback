@@ -1,8 +1,9 @@
 # Datamodel v1.1 for SQL
 
 ## What is this beta all about?
-In the last months we have worked with the community to define a new (datamodel specification)[https://github.com/prisma/prisma/issues/3408] called v1.1. With our old Datamodel the Prisma user experience was very different depending on whether you were using Prisma with a new database or an existing database. The syntax was slightly different and it was not possible to use our migration system on top of an existing database. The main goal of this effort was to unify this experience. From now on you can use the migration system with existing databases as well.
-This also implies that the user can from now on take control over the layout of the database schema. Prismas migration system used to only allow the use of join tables to realise relations. This limitation has been lifted with this effort.
+In the last months we have worked with the community to define a new (datamodel specification)[https://github.com/prisma/prisma/issues/3408] called v1.1. With our old Datamodel the Prisma user experience was very different depending on whether you were using Prisma with a new database or an existing database. The syntax was slightly different and it was not possible to use our migration system on top of an existing database. 
+
+The main goal of this effort was to unify this experience. From now on you can use the migration system with existing databases as well. This also implies that the user can from now on take control over the layout of the database schema. Prismas migration system used to only allow the use of join tables to realise relations. This limitation has been lifted with this effort.
 
 ## Prerequisites
 1. Use the latest alpha Prisma CLI: `npm install -g prisma@alpha`
@@ -38,3 +39,12 @@ Please report bugs directly here in this repo! :pray:
 ## What is not part of this beta?
 1. [Multi column indexes](https://github.com/prisma/prisma/issues/3405) are not of this beta yet. We are currently working on implementing them.
 2. [Polymorphic relations](https://github.com/prisma/prisma/issues/3407) are not part of this beta. We will make a separate effort to implement them.
+
+## FAQ
+
+**How can i migrate my Prisma project with existing data to a new optimised Database schema? E.g. join tables have been removed**
+We recommend the following:
+1. Use `prisma export` to export the data from your existing Prisma project.
+1. Copy your existing Datamodel to a new Prisma project and apply your desired optimisations to your Datamodel.
+1. Use `prisma import` to import the data into your new Prisma project.
+
