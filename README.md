@@ -72,6 +72,24 @@ TBD
 
 TBD
 
+## New directives in datamodel v1.1
+
+### `@db(name: String!)`
+
+TBD
+
+### `@linkTable`
+
+TBD
+
+### `id`
+
+TBD
+
+### `createdAt` & `updatedAt`
+
+TBD
+
 ## Migrations and introspection with the Prisma CLI
 
 ### `prisma deploy`
@@ -83,13 +101,25 @@ The command `prisma deploy` got enhanced. From now on, there will be two modes t
 
 ### `prisma introspect`
 
-The command `prisma introspect` has been adapted to output the new datamodel format. Make sure to use the `--prototype` flag when you use it: `prisma introspect --prototype`. The command has been improved so that it will pay respect to existing Datamodel files. This way you can use this command to translate your database schema into a datamodel while the introspection will preserve the ordering of types and fields of your existing datamodel file :pray:
+The command `prisma introspect` has been adapted to output the new datamodel format when using if with the `--prototype` flag: 
 
-You can fluently switch between those two commands however you like. For instance you could use `prisma deploy` for most of your migration needs. When you hit an advanced usecase where the Prisma migration system is not powerful enough yet for your needs, migrate the database manually. Then use `prisma introspect --prototype` to update your Datamodel with those changes from the database and `prisma deploy --no-migrate` to let the Prisma server know about that. Afterwards you can start to use `prisma deploy` again. 
+```
+prisma introspect --prototype
+```
+
+The command has been improved so that it will pay respect to existing datamodel files. This way you can use it to translate your database schema into a datamodel while the introspection will preserve the ordering of types and fields of your existing datamodel file.
+
+### Common workflows
+
+You can fluently switch between those two commands however you like. For instance you could use `prisma deploy` for most of your migration needs. When you hit an advanced use case where the Prisma migration system is not yet powerful enough, you can:
+
+1. Migrate the database manually 
+1. Use `prisma introspect --prototype` to update your datamodel with those changes from the database
+1. Use `prisma deploy --no-migrate` to let the Prisma server know about that
 
 ## Where should I report bugs?
 
-Please report bugs directly here in this repo! :pray:
+Please report bugs directly [here](https://github.com/prisma/datamodel-v1.1-for-sql-beta/issues) in this repo!
 
 ## What is not part of this beta?
 
