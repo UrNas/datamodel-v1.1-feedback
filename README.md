@@ -60,15 +60,15 @@ databases:
 
 > Note that you might need to adjust the database connection details to match your setup. Check out the [`example`](./example) folder for a ready-to-use setup.
 
-### From scratch
+### Option 1: From scratch
 
 TBD
 
-### With an existing database
+### Option 2: With an existing database
 
 TBD
 
-### Migrating from datamodel v1.1
+### Option 3: Migrating from datamodel v1.1
 
 TBD
 
