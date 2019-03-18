@@ -72,12 +72,16 @@ TBD
 
 TBD
 
-## What do I need to know apart from the datamodel changes?
+## Migrations and introspection with the Prisma CLI
 
-The command `prisma deploy` got enhanced. From now on, there will be two modes that allow developers to choose whether the Prisma migration system should migrate your database or not:
+### `prisma deploy`
+
+The command `prisma deploy` got enhanced. From now on, there will be two modes that allow developers to choose whether the Prisma migration system should migrate their database:
 
 - `prisma deploy`: This command reads your datamodel and migrates the underlying database to match it.
-- `prisma deploy --no-migrate`: This command does *not* migrate the underlying database. Instead it expects the database schema to be in the right state. If the datamodel and database schema do not align, you will likely see runtime errors when using the Prisma API.
+- `prisma deploy --no-migrate`: This command does *not* migrate the underlying database. Instead, it expects the database schema to be in the right state already (which means you need to manually migrate the database _before_ running `prisma deploy --no-migrate`)! If the datamodel and database schema do not align, `prisma deploy` will throw an error.
+
+### `prisma introspect`
 
 The command `prisma introspect` has been adapted to output the new datamodel format. Make sure to use the `--prototype` flag when you use it: `prisma introspect --prototype`. The command has been improved so that it will pay respect to existing Datamodel files. This way you can use this command to translate your database schema into a datamodel while the introspection will preserve the ordering of types and fields of your existing datamodel file :pray:
 
