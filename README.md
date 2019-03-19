@@ -62,7 +62,121 @@ databases:
 
 ### Option 1: From scratch
 
-TBD
+#### 1. Create Docker Compose file
+
+Create a new file callled `docker-compose.yml` and add the following code to it:
+
+```yml
+version: '3'
+services:
+  prisma:
+    image: prismagraphql/prisma:1.30-beta
+    restart: always
+    ports:
+    - "4466:4466"
+    environment:
+      PRISMA_CONFIG: |
+        port: 4466
+        prototype: true
+        databases:
+          default:
+            connector: postgres
+            host: postgres
+            user: prisma
+            password: prisma
+            port: 5432
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+    volumes:
+      - postgres:/var/lib/postgresql/data
+volumes:
+  postgres:
+```
+
+Note that in this example, we're using a PostgreSQL database. We're also exposing the PostgreSQL port `5432` so that you can e.g. connect to it from a database GUI like Postico.
+
+#### 2. Deploy Prisma server
+
+Run the following command to deploy your server:
+
+```
+docker-compose up -d
+```
+
+#### 3. Setup Prisma project
+
+A Prisma project always requires at least two files: `prisma.yml` and a datamodel file (e.g. called `datamodel.prisma`).
+
+Create the following `prisma.yml`:
+
+```yml
+endpoint: http://localhost:4466
+datamodel: datamodel.prisma
+```
+
+And this `datamodel.prisma`:
+
+```graphql
+type User @db(name: "user") {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  email: String! @unique
+  name: String
+  role: Role @default(value: USER)
+  posts: [Post!]!
+  profile: Profile @relation(link: INLINE)
+}
+
+type Profile @db(name: "profile") {
+  id: ID! @id
+  user: User!
+  bio: String!
+}
+
+type Post @db(name: "post") {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  author: User!
+  published: Boolean! @default(value: false)
+  categories: [Category] @relation(link: TABLE, name: "PostToCategory")
+}
+
+type Category @db(name: "category") {
+  id: ID! @id
+  name: String!
+  posts: [Post!]! @relation(name: "PostToCategory")
+}
+
+type PostToCategory @db(name: "post_to_category") @linkTable {
+  post: Post
+  category: Category
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+
+Let's understand some important bits of the datamodel:
+
+- Each model is mapped a table that's named after the model but lowercased using the `@db` directive
+- There are the following relations:
+  - **One-to-one** between `User` and `Profile`
+  - **One-to-many** between `User` and `Post`
+  - **Many-to-many** between `Post` and `Category`
+- The **One-to-one** relation between `User` and `Profile` is annotated with `@relation(link: INLINE)` on the `User` model. This means `user` records in the database have a reference to a `profile` record if the relation is present (because the `profile` field is not required, the relation might just be `NULL`). An alternative to `INLINE` is `TABLE` in which case Prisma would track the relation via a dedicated relation table.
+- Each model has an `id` field annotated with the `@id` directive.
+- For the `User` model, the database automatically tracks _when_ a record is created via the field annotated with the `@createdAt` directive.
+- For the `Post` model, the database automatically tracks _when_ a record is created and updated via the fields annotated with the `@createdAt` and `@updatedAt` directives.
+
 
 ### Option 2: With an existing database
 
@@ -72,7 +186,7 @@ TBD
 
 TBD
 
-## New directives in datamodel v1.1
+## New and updated directives in datamodel v1.1
 
 ### `@db(name: String!)`
 
@@ -82,13 +196,15 @@ TBD
 
 TBD
 
-### `id`
+### `@id`
 
 TBD
 
-### `createdAt` & `updatedAt`
+### `@createdAt` & `@updatedAt`
 
 TBD
+
+### `@relation`
 
 ## Migrations and introspection with the Prisma CLI
 
