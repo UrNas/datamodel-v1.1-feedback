@@ -267,7 +267,7 @@ CREATE TABLE "default$default"."user" (
 
 #### 5. Viewing and editing your data
 
-From here on, you can use the [Prisma client](https://www.prisma.io/docs/prisma-client/) if you want to access the data in your database programmatically. In the following, we'll highlight two visual ways to interact with the data.
+From here on, you can use the [Prisma client](https://www.prisma.io/docs/prisma-client/) if you want to access the data in your database programmatically. In the following, we'll highlight two _visual_ ways to interact with the data.
 
 ##### Using Prisma Admin
 
