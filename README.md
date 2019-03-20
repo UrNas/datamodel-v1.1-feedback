@@ -372,7 +372,7 @@ Once the process has terminated, the Prisma CLI will have generated the followin
 - `prisma.yml`: The root configuration file for your Prisma project.
 - `datamodel.prisma`: Your database schema represented in datamodel v1.1 syntax.
 
-**IMPORTANT**: You need to manually [add the `prototype: true` flag to `docker-compose.yml`](#3-set-the-prototype-flag-to-true-in-prisma_config).:
+**IMPORTANT**: You need to manually [add the `prototype: true` flag](#3-set-the-prototype-flag-to-true-in-prisma_config) to `docker-compose.yml`:
 
 ```yml
 port: 4466
