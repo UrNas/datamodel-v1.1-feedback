@@ -1,8 +1,18 @@
 # Datamodel v1.1
 
-## Motivation
+Over the last months, we have worked with the community to define a new [datamodel specification](https://github.com/prisma/prisma/issues/3408) for Prisma. This new version is called datamodel v1.1 and is currently available in an early preview. 
 
-Over the last months, we have worked with the community to define a new [datamodel specification](https://github.com/prisma/prisma/issues/3408) for Prisma. This new version is called datamodel v1.1.
+- [Motivation]()
+  - [More control over database layout]()
+  - [Consolidated migrations]()
+- [Getting started with the datamodel v1.1]()
+  - [Prerequisites]()
+  - [Option 1: From scratch]()
+  - [Option 2: With an existing database]()
+  - [Option 3: Migrating from datamodel v1.1]()
+- [Migrations and introspection with the Prisma CLI]()
+
+## Motivation
 
 The main motivations for the new datamodel are:
 
@@ -172,11 +182,118 @@ Let's understand some important bits of the datamodel:
   - **One-to-one** between `User` and `Profile`
   - **One-to-many** between `User` and `Post`
   - **Many-to-many** between `Post` and `Category`
-- The **One-to-one** relation between `User` and `Profile` is annotated with `@relation(link: INLINE)` on the `User` model. This means `user` records in the database have a reference to a `profile` record if the relation is present (because the `profile` field is not required, the relation might just be `NULL`). An alternative to `INLINE` is `TABLE` in which case Prisma would track the relation via a dedicated relation table.
+- The **one-to-one** relation between `User` and `Profile` is annotated with `@relation(link: INLINE)` on the `User` model. This means `user` records in the database have a reference to a `profile` record if the relation is present (because the `profile` field is not required, the relation might just be `NULL`). An alternative to `INLINE` is `TABLE` in which case Prisma would track the relation via a dedicated relation table.
+- The **one-to-many** relation between `User` and `Post` is is tracked inline the relation via the `author` column of the `post` table, i.e. the `@relation(link: INLINE)` directive is inferred on the `author` field of the `Post` model.
+- The **many-to-many** relation between `Post` and `Category` is tracked via a dedicated relation table called `PostToCategory`. This relation table is part of the datamodel and annotated with the `@linkTable` directive.
 - Each model has an `id` field annotated with the `@id` directive.
 - For the `User` model, the database automatically tracks _when_ a record is created via the field annotated with the `@createdAt` directive.
 - For the `Post` model, the database automatically tracks _when_ a record is created and updated via the fields annotated with the `@createdAt` and `@updatedAt` directives.
 
+#### 4. Deploy datamodel (migrate database)
+
+With `prisma.yml` and `datamodel.prisma` in place, you can deploy your datamodel:
+
+```
+prisma deploy
+```
+
+The underlying database that's created by Prisma is called after the service name and stage (separated by the `$` character). Because the `endpoint` in `prisma.yml` doesn't use these properties, Prisma defaults to `default` for both. The database name consequently is `default$default`.
+
+Here is an overview of the tables that are being created in `default$default`:
+
+##### `catgegory`
+
+```sql
+CREATE TABLE "default$default"."category" (
+    "id" varchar(25) NOT NULL,
+    "name" text NOT NULL,
+    PRIMARY KEY ("id")
+);
+```
+
+##### `post`
+
+```sql
+CREATE TABLE "default$default"."post" (
+    "id" varchar(25) NOT NULL,
+    "author" varchar(25),
+    "published" bool NOT NULL,
+    "createdAt" timestamp(3) NOT NULL,
+    "updatedAt" timestamp(3) NOT NULL,
+    "title" text NOT NULL,
+    PRIMARY KEY ("id")
+);
+```
+
+##### `post_to_category`
+
+```sql
+CREATE TABLE "default$default"."post_to_category" (
+    "category" varchar(25) NOT NULL,
+    "post" varchar(25) NOT NULL
+);
+```
+
+##### `profile`
+
+```sql
+CREATE TABLE "default$default"."profile" (
+    "id" varchar(25) NOT NULL,
+    "bio" text NOT NULL,
+    PRIMARY KEY ("id")
+);
+```
+
+##### `user`
+
+```sql
+CREATE TABLE "default$default"."user" (
+    "id" varchar(25) NOT NULL,
+    "email" text NOT NULL,
+    "name" text,
+    "role" text NOT NULL,
+    "createdAt" timestamp(3) NOT NULL,
+    "profile" varchar(25),
+    PRIMARY KEY ("id")
+);
+```
+
+#### 5. Viewing and editing your data
+
+From here on, you can use the [Prisma client](https://www.prisma.io/docs/prisma-client/) if you want to access the data in your database programmatically. In the following, we'll highlight two visual ways to interact with the data.
+
+##### Using Prisma Admin
+
+To access your data in [Prisma Admin](https://www.prisma.io/docs/prisma-admin/), you need to navigate to the Admin endpoint of your Prisma project: `http://localhost:4466/_admin`
+
+![](https://imgur.com/wJCyxVy.png)
+
+##### Using TablePlus
+
+While Prisma Admin is focussed on convenient data management workflows, you can also connect to your database from other database GUIs. In contrast to Admin, these tools typically highlight the actual database structure (instead of the Prisma datamodel abstraction). In this example, we're using [TablePlus](https://tableplus.io/). 
+
+> To be able to use connect to your database from a database GUI, you need to map the database port in the databse configuration of your Docker Compose file. In our case, this is why we're adding the `5432:5432` line to it.
+
+When opening TablePlus, you need to:
+
+1. Create a new connection
+1. Select **PostgreSQL**
+1. Provide a the database connection details:
+  - **Name**: Can be anything, e.g. `Local PostgreSQL`
+  - **Host/Socket**: `localhost`
+  - **Port**: `5432`
+  - **User**: `prisma`
+  - **Password**: `prisma` 
+  - **Database**: `prisma`
+1. Click **Connect**
+
+These are your database connection details:
+
+![](https://imgur.com/Kw7Upd3.png)
+
+After you connected to the database, you can explore the data and table structure in the TablePlus GUI:
+
+![](https://imgur.com/AFjmZV5.png)
 
 ### Option 2: With an existing database
 
