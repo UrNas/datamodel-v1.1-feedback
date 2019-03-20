@@ -303,7 +303,7 @@ To access your data in [Prisma Admin](https://www.prisma.io/docs/prisma-admin/),
 
 While Prisma Admin is focussed on convenient data management workflows, you can also connect to your database from other database GUIs. In contrast to Admin, these tools typically highlight the actual database structure (instead of the Prisma datamodel abstraction). In this example, we're using [TablePlus](https://tableplus.io/). 
 
-> To be able to use connect to your database from a database GUI, you need to map the database port in the databse configuration of your Docker Compose file. In our case, this is why we're adding the `5432:5432` line to it.
+> To connect to your database from a database GUI, you need to [map the port](https://docs.docker.com/compose/compose-file/#ports) in the database configuration of your Docker Compose file. In our case, this is why we're adding the `5432:5432` line to it.
 
 When opening TablePlus, you need to:
 
