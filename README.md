@@ -328,7 +328,11 @@ TBD
 
 #### `@relation`
 
+TBD
+
 ### Relations
+
+TBD
 
 ## Migrations and introspection with the Prisma CLI
 
