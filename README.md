@@ -253,7 +253,7 @@ CREATE TABLE "default$default"."post_to_category" (
 | index_name | index_algorithm | is_unique | column_name |
 | --- | --- | --- | --- |
 | `post_to_category_AB_unique` | `BTREE` | `TRUE` | `category`,`post`|
-| `post_to_category_B` | `BTREE` | `FALSE` | `category`,`post`|
+| `post_to_category_B` | `BTREE` | `FALSE` | `post`|
 
 ##### `profile`
 
