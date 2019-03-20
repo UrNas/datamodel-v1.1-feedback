@@ -218,6 +218,11 @@ CREATE TABLE "default$default"."category" (
 );
 ```
 
+| index_name | index_algorithm | is_unique | column_name |
+| --- | --- | --- | --- |
+| `category_pkey` | `BTREE` | `TRUE` | `id` |
+
+
 ##### `post`
 
 ```sql
@@ -232,6 +237,10 @@ CREATE TABLE "default$default"."post" (
 );
 ```
 
+| index_name | index_algorithm | is_unique | column_name |
+| --- | --- | --- | --- |
+| `post_pkey` | `BTREE` | `TRUE` | `id` |
+
 ##### `post_to_category`
 
 ```sql
@@ -240,6 +249,11 @@ CREATE TABLE "default$default"."post_to_category" (
     "post" varchar(25) NOT NULL
 );
 ```
+
+| index_name | index_algorithm | is_unique | column_name |
+| --- | --- | --- | --- |
+| `post_to_category_AB_unique` | `BTREE` | `TRUE` | `category`,`post`|
+| `post_to_category_B` | `BTREE` | `FALSE` | `category`,`post`|
 
 ##### `profile`
 
@@ -250,6 +264,10 @@ CREATE TABLE "default$default"."profile" (
     PRIMARY KEY ("id")
 );
 ```
+
+| index_name | index_algorithm | is_unique | column_name |
+| --- | --- | --- | --- |
+| `profile_pkey` | `BTREE` | `TRUE` | `id` |
 
 ##### `user`
 
@@ -264,6 +282,12 @@ CREATE TABLE "default$default"."user" (
     PRIMARY KEY ("id")
 );
 ```
+
+| index_name | index_algorithm | is_unique | column_name |
+| --- | --- | --- | --- |
+| `user_pkey` | `BTREE` | `TRUE` | `id` |
+| `default$default.user.email._UNIQUE` | `BTREE` | `TRUE` | `email` |
+
 
 #### 5. Viewing and editing your data
 
