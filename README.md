@@ -289,7 +289,7 @@ CREATE TABLE "default$default"."user" (
 | `default$default.user.email._UNIQUE` | `BTREE` | `TRUE` | `email` |
 
 
-#### 5. Viewing and editing your data
+#### 5. View and edit your data
 
 From here on, you can use the [Prisma client](https://www.prisma.io/docs/prisma-client/) if you want to access the data in your database programmatically. In the following, we'll highlight two _visual_ ways to interact with the data.
 
@@ -324,7 +324,83 @@ After you connected to the database, you can explore the data and table structur
 
 ### Option 2: With an existing database
 
-TBD
+#### 1. Introspect database & generate datamodel
+
+If you have a database that already contains some data, you can get started by introspecting the database schema and let Prisma generate the right datamodel for you.
+
+To get started, run:
+
+```
+prisma init --prototype
+```
+
+This launches an interactive wizard that guides you through the process of connecting to your existing database. The following interaction shows how to connect to a local PostgreSQL database:
+
+```
+$ prisma init myapp --prototype
+? Set up a new Prisma server or deploy to an existing server? Use existing database
+? What kind of database do you want to deploy to? PostgreSQL
+? Does your database contain existing data? Yes
+? Enter database host localhost
+? Enter database port 5432
+? Enter database user prisma
+? Enter database password prisma
+? Enter database name (the database includes the schema) myblog
+? Use SSL? No
+? Please select the schema you want to introspect public
+Introspecting database public 113ms
+Created datamodel definition based on 6 tables.
+? Select the programming language for the generated Prisma client Don't generate
+
+Created 3 new files:                                                                          
+
+  prisma.yml           Prisma service definition
+  datamodel.prisma    GraphQL SDL-based datamodel (foundation for database)
+  docker-compose.yml   Docker configuration file
+
+Next steps:
+
+  1. Start your Prisma server: docker-compose up -d
+  2. Deploy your Prisma service: prisma deploy
+  3. Read more about introspection:
+     http://bit.ly/prisma-introspection
+```
+
+Once the process has terminated, the Prisma CLI will have generated the following files inside the new `myapp` directory for you:
+
+- `docker-compose.yml`: The Docker Compose file that specifies your Prisma server and its database connection.
+- `prisma.yml`: The root configuration file for your Prisma project.
+- `datamodel.prisma`: Your database schema represented in datamodel v1.1 syntax.
+
+**IMPORTANT**: You need to manually [add the `prototype: true` flag to `docker-compose.yml`](#3-set-the-prototype-flag-to-true-in-prisma_config).:
+
+```yml
+port: 4466
+prototype: true
+databases:
+  default:
+    connector: postgres # or mysql
+    host: 127.0.0.1
+    port: 5432
+    user: prisma
+    password: prisma
+```
+
+#### 2. Deploy Prisma setup
+
+Now you can deploy your Prisma setup:
+
+```
+cd myapp
+docker-compose up -d
+prisma deploy
+```
+
+#### 3. View and edit your data
+
+From here on, you can use the [Prisma client](https://www.prisma.io/docs/prisma-client/) if you want to access the data in your database programmatically. 
+
+To access your data in [Prisma Admin](https://www.prisma.io/docs/prisma-admin/), you need to navigate to the Admin endpoint of your Prisma project: `http://localhost:4466/_admin`
 
 ### Option 3: Migrating from datamodel v1.1
 
