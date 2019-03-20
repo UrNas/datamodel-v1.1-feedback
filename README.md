@@ -2,15 +2,22 @@
 
 Over the last months, we have worked with the community to define a new [datamodel specification](https://github.com/prisma/prisma/issues/3408) for Prisma. This new version is called datamodel v1.1 and is currently available in an early preview. 
 
-- [Motivation]()
-  - [More control over database layout]()
-  - [Consolidated migrations]()
-- [Getting started with the datamodel v1.1]()
-  - [Prerequisites]()
-  - [Option 1: From scratch]()
-  - [Option 2: With an existing database]()
-  - [Option 3: Migrating from datamodel v1.1]()
+- [Motivation](#motivation)
+  - [More control over database layout](#more-control-over-database-layout)
+  - [Consolidated migrations](#consolidated-migrations)
+- [Getting started with the datamodel v1.1](#getting-started-with-the-datamodel-v11)
+  - [Prerequisites](#prerequisites)
+  - [Option 1: From scratch](#option-1-from-scratch)
+  - [Option 2: With an existing database](#option-2-with-an-existing-database)
+  - [Option 3: Migrating from datamodel v1]()
+- [What's new in datamodel v1.1]()
+  - [Directives]()
+  - [Relations]()
 - [Migrations and introspection with the Prisma CLI]()
+  - [`prisma deploy`]()
+  - [`prisma introspect`]()
+  - [Common workflows]()
+- [FAQ]()
 
 ## Motivation
 
@@ -279,17 +286,13 @@ When opening TablePlus, you need to:
 1. Create a new connection
 1. Select **PostgreSQL**
 1. Provide a the database connection details:
-  - **Name**: Can be anything, e.g. `Local PostgreSQL`
-  - **Host/Socket**: `localhost`
-  - **Port**: `5432`
-  - **User**: `prisma`
-  - **Password**: `prisma` 
-  - **Database**: `prisma`
+    - **Name**: Can be anything, e.g. `Local PostgreSQL`
+    - **Host/Socket**: `localhost`
+    - **Port**: `5432`
+    - **User**: `prisma`
+    - **Password**: `prisma` 
+    - **Database**: `prisma`
 1. Click **Connect**
-
-These are your database connection details:
-
-![](https://imgur.com/Kw7Upd3.png)
 
 After you connected to the database, you can explore the data and table structure in the TablePlus GUI:
 
@@ -303,25 +306,29 @@ TBD
 
 TBD
 
-## New and updated directives in datamodel v1.1
+## What's new in datamodel v1.1?
 
-### `@db(name: String!)`
+### Directives
 
-TBD
-
-### `@linkTable`
+#### `@db(name: String!)`
 
 TBD
 
-### `@id`
+#### `@linkTable`
 
 TBD
 
-### `@createdAt` & `@updatedAt`
+#### `@id`
 
 TBD
 
-### `@relation`
+#### `@createdAt` & `@updatedAt`
+
+TBD
+
+#### `@relation`
+
+### Relations
 
 ## Migrations and introspection with the Prisma CLI
 
@@ -350,22 +357,22 @@ You can fluently switch between those two commands however you like. For instanc
 1. Use `prisma introspect --prototype` to update your datamodel with those changes from the database
 1. Use `prisma deploy --no-migrate` to let the Prisma server know about that
 
-## Where should I report bugs?
+## FAQ
+
+#### Where should I report bugs?
 
 Please report bugs directly [here](https://github.com/prisma/datamodel-v1.1-for-sql-beta/issues) in this repo!
 
-## What is not part of this beta?
+#### What is not part of this beta?
 
 1. [Multi column indexes](https://github.com/prisma/prisma/issues/3405) are not of this beta yet. We are currently working on implementing them.
 2. [Polymorphic relations](https://github.com/prisma/prisma/issues/3407) are not part of this beta. We will make a separate effort to implement them.
 
-## FAQ
 
-**How can I migrate my Prisma project with existing data to a new optimised Database schema? E.g. join tables have been removed**
+#### How can I migrate my Prisma project with existing data to a new optimised database schema (e.g. JOIN tables have been removed)? 
 
 We recommend the following:
 
 1. Use `prisma export` to export the data from your existing Prisma project.
 1. Copy your existing Datamodel to a new Prisma project and apply your desired optimisations to your Datamodel.
 1. Use `prisma import` to import the data into your new Prisma project.
-
