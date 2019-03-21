@@ -11,7 +11,7 @@ Over the last months, we have worked with the community to define a new [datamod
   - [Prerequisites](#prerequisites)
   - [Option 1: From scratch](#option-1-from-scratch)
   - [Option 2: With an existing database](#option-2-with-an-existing-database)
-  - [Option 3: Migrating from datamodel v1](#option-3-migrating-from-datamodel-v11)
+  - [Option 3: Migrating from datamodel v1](#option-3-upgrading-from-datamodel-v11)
 - [What's new in datamodel v1.1](#whats-new-in-datamodel-v11)
   - [Directives](#directives)
   - [Relations](#relations)
@@ -404,7 +404,7 @@ From here on, you can use the [Prisma client](https://www.prisma.io/docs/prisma-
 
 To access your data in [Prisma Admin](https://www.prisma.io/docs/prisma-admin/), you need to navigate to the Admin endpoint of your Prisma project: `http://localhost:4466/_admin`
 
-### Option 3: Migrating from datamodel v1.1
+### Option 3: Upgrading from datamodel v1.1
 
 #### 1. Datamodel v1 setup
 
