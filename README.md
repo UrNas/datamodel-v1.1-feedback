@@ -758,7 +758,7 @@ The command `prisma deploy` got enhanced. From now on, there will be two modes t
 
 ### `prisma introspect`
 
-The command `prisma introspect` has been adapted to output the new datamodel format when using if with the `--prototype` flag: 
+The command `prisma introspect` has been adapted to output the new datamodel format when using it with the `--prototype` flag: 
 
 ```
 prisma introspect --prototype
