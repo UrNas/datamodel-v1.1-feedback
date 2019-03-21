@@ -2,6 +2,8 @@
 
 Over the last months, we have worked with the community to define a new [datamodel specification](https://github.com/prisma/prisma/issues/3408) for Prisma. This new version is called datamodel v1.1 and is currently available in an early preview. 
 
+Please help us test the implementation of the new datamodel and share your feedback or report problems by [opening an issue](https://github.com/prisma/datamodel-v1.1-feedback/issues/new) in this repository. 
+
 ## Table of contents
 
 - [Motivation](#motivation)
