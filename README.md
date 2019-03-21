@@ -691,7 +691,39 @@ Note that there currently still is a [bug](https://github.com/prisma/datamodel-v
 
 #### `@db(name: String!)`
 
-TBD
+The `@db` directive is used to control how the datamodel is mapped to the underlying database schema. Specifically it allows developers to:
+
+- Map the name of a Prisma model to a certain table in the underlying database
+- Map the name of a field on a Prisma model to a certain column in the underlying database
+
+##### Usage
+
+The `@db` directive can be applied to:
+
+- Types (i.e. models)
+- Fields
+
+Usage of the `@db` directive is **optional**. If it's not applied, the table/column name in the underlying database will default to name that's used in the Prisma datamodel.
+
+##### Examples
+
+_A model omitting the directive. The underlying table will be called `User`_
+
+```graphl
+type User {
+  id: ID! @id
+  name: String!
+}
+```
+
+_A model applying the directive on a type- and field-level. The underlying table will be called `user` and the column `full_name`_
+
+```graphl
+type User @db(name: "user") {
+  id: ID! @id
+  name: String! @db(name: "full_name")
+}
+```
 
 #### `@linkTable`
 
