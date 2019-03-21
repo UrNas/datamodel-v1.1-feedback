@@ -623,7 +623,7 @@ Here's the datamodel that incorporates these changes, put it into a file called 
 ```graphql
 type User {
   id: ID! @id
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
   email: String! @unique
   name: String
   role: Role @default(value: USER)
@@ -639,11 +639,11 @@ type Profile {
 
 type Post {
   id: ID! @id
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   title: String!
+  author: User!
   published: Boolean! @default(value: false)
-  author: User! @relation(link: INLINE)
   categories: [Category!]!
 }
 
@@ -676,6 +676,14 @@ The new database schema now has the following (empty) tables:
 - `_CategoryToPost`
 
 ##### 4.3. Import the data
+
+To import the data, you need to use the `prisma import` command and point it to the exported file from [4.1.](#41-export-data), e.g.:
+
+```
+prisma import -d ./export-2019-03-21T09:08:48.816Z.zip
+```
+
+Note that there currently still is a [bug](https://github.com/prisma/datamodel-v1.1-feedback/issues/1) that prevents this from working smoothly.
 
 ## What's new in datamodel v1.1?
 
