@@ -545,7 +545,7 @@ Here is the datamodel updated to the new syntax:
 ```graphql
 type User {
   id: ID! @id
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
   email: String! @unique
   name: String
   role: Role @default(value: USER)
@@ -561,8 +561,8 @@ type Profile {
 
 type Post {
   id: ID! @id
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   title: String!
   published: Boolean! @default(value: false)
   author: User!
