@@ -2,6 +2,8 @@
 
 Over the last months, we have worked with the community to define a new [datamodel specification](https://github.com/prisma/prisma/issues/3408) for Prisma. This new version is called datamodel v1.1 and is currently available in an early preview. 
 
+## Table of contents
+
 - [Motivation](#motivation)
   - [More control over database layout](#more-control-over-database-layout)
   - [Consolidated migrations](#consolidated-migrations)
