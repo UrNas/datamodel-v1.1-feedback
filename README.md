@@ -592,10 +592,73 @@ If you want to optimize your database schema and take advantage of the new featu
 - Option 1: Export the data from the old project and import it into a new Prisma project where the optimisations are applied
 - Option 2: Manually migrate the database schema and subsequently adjust the datamodel to match it
 
-##### Option 1: Export and import data
+##### 4.1. Export data 
+
+To export the data, you can run the following command (inside the directory where your `prisma.yml` is located):
+
+```
+prisma export
+```
+
+This creates the following file: `export-TIMESTAMP.zip`, where `TIMESTAMPT` represents the time of the export, e.g. `export-2019-03-21T09:08:48.816Z.zip`.
+
+##### 4.2. Optimize the database schema
+
+Next, you need to initialize a new Prisma project that has a similar configuration as your previous one, e.g. the following `prisma.yml`:
+
+```yml
+endpoint: http://localhost:4466
+datamodel: datamodel.prisma
+```
+
+When creating the new datamodel file, you can copy over your current datamodel and apply the optimizations you want to introduce. In this case, we will:
+
+- Turn the one-to-one relation between `User` and `Profile` into an _inline_ relation tracked via the `User` table
+- Turn the one-to-manby relation between `User` and `Post` into an _inline_ relation tracked via the `Post` table
+
+Here's the datamodel that incorporates these changes:
+
+```graphql
+```graphql
+type User {
+  id: ID! @id
+  createdAt: DateTime!
+  email: String! @unique
+  name: String
+  role: Role @default(value: USER)
+  posts: [Post!]!
+  profile: Profile @relation(link: INLINE)
+}
+
+type Profile {
+  id: ID! @id
+  user: User!
+  bio: String!
+}
+
+type Post {
+  id: ID! @id
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
+  published: Boolean! @default(value: false)
+  categories: [Category!]!
+}
+
+type Category {
+  id: ID! @id
+  name: String!
+  posts: [Post!]!
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+```
 
 
-TBD
 ##### Option 2: 
 
 
@@ -625,7 +688,7 @@ TBD
 
 ### Relations
 
-TBD
+[Draft](https://gist.github.com/nikolasburk/e02d0fcb1302fddf80ecaf841ca64446)
 
 ## Migrations and introspection with the Prisma CLI
 
