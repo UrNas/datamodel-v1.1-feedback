@@ -687,7 +687,7 @@ To import the data, you need to use the `prisma import` command and point it to 
 prisma import -d ./export-2019-03-21T09:08:48.816Z.zip
 ```
 
-Note that there currently still is a [bug](https://github.com/prisma/datamodel-v1.1-feedback/issues/1) that prevents this from working smoothly.
+Note that there currently still is a [bug](https://github.com/prisma/datamodel-v1.1-feedback/issues/1) that prevents this from working smoothly. One workaround is to just add the `createdAt: DateTime! @createdAt` and `updatedAt: DateTime! @updatedAt` fields to thyour new datamodel. 
 
 ## What's new in datamodel v1.1?
 
