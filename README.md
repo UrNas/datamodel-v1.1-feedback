@@ -431,8 +431,9 @@ type Post {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  author: User!
+  title: String!
   published: Boolean! @default(value: "false")
+  author: User!
   categories: [Category!]!
 }
 
@@ -560,8 +561,9 @@ type Post {
   id: ID! @id
   createdAt: DateTime!
   updatedAt: DateTime!
-  author: User!
+  title: String!
   published: Boolean! @default(value: false)
+  author: User!
   categories: [Category!]!
 }
 
@@ -616,9 +618,8 @@ When creating the new datamodel file, you can copy over your current datamodel a
 - Turn the one-to-one relation between `User` and `Profile` into an _inline_ relation tracked via the `User` table
 - Turn the one-to-manby relation between `User` and `Post` into an _inline_ relation tracked via the `Post` table
 
-Here's the datamodel that incorporates these changes:
+Here's the datamodel that incorporates these changes, put it into a file called `datamodel.prisma`:
 
-```graphql
 ```graphql
 type User {
   id: ID! @id
@@ -640,8 +641,9 @@ type Post {
   id: ID! @id
   createdAt: DateTime!
   updatedAt: DateTime!
-  author: User!
+  title: String!
   published: Boolean! @default(value: false)
+  author: User! @relation(link: INLINE)
   categories: [Category!]!
 }
 
@@ -656,11 +658,24 @@ enum Role {
   ADMIN
 }
 ```
+
+> Note that `@relation(link: INLINE)` on `author` could also be omitted since `INLINE` is the default relation type for a one-to-many relation.
+
+With these changes in place, you can deploy the datamodel: 
+
+```
+prisma deploy
 ```
 
+The new database schema now has the following (empty) tables:
 
-##### Option 2: 
+- `User`
+- `Profile`
+- `Post`
+- `Category`
+- `_CategoryToPost`
 
+##### 4.3. Import the data
 
 ## What's new in datamodel v1.1?
 
