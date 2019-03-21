@@ -812,11 +812,11 @@ type User {
 
 #### `@relation`
 
-TBD
+See the the [Relations](#relations) section for more info.
 
 #### `@linkTable`
 
-TBD
+See the the [Relations](#relations) section for more info.
 
 ### Relations
 
@@ -864,7 +864,7 @@ type Profile {
 }
 ```
 
-This stores the primary key of `Profile` in the `profile` column on the `User` tables:
+This stores the primary key of `Profile` in the `profile` column on the `User` table:
 
 ```sql
 CREATE TABLE "default$default"."User" (
@@ -922,7 +922,7 @@ CREATE TABLE "default$default"."_MyRelation" (
 );
 ```
 
-###### Customized relation table
+###### Customized relation table with `@linkTable`
 
 ```graphql
 type User {
@@ -945,15 +945,205 @@ This creates the following relation table:
 
 ```sql
 CREATE TABLE "default$default"."MyRelation" (
-  "post" varchar(25) NOT NULL,
+  "profile" varchar(25) NOT NULL,
   "user" varchar(25) NOT NULL
 );
 ```
 
+The `@linkTable` directive should be used when you want to:
+
+- remove the underscore in front of the relation name
+- call the foreign key columns in the relation table something else than `A` and `B`
+
+So you need it in the active case when you want to control that layout. More prominently you need it in the passive case, when you want to connect to an existing database that does not match the prisma conventions.
 
 #### 1:n relations
 
+When defining a 1:n relation between two models, the `@relation` directive is optional. Prisma defaults to an inline relation.
+
+##### Inline
+
+```graphql
+type User {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  author: User! @relation(link: INLINE)
+}
+```
+
+This stores the primary key of `User` in the `author` column on the `Post` table:
+
+```sql
+CREATE TABLE "relations$dev1"."Post" (
+    "id" varchar(25) NOT NULL,
+    "author" varchar(25),
+    PRIMARY KEY ("id")
+);
+```
+
+Note that in this case the `@relation` directive could also be omitted because this is the default behaviour for 1:n relations.
+
+##### Relation table
+
+###### Generatic relation table
+
+```graphql
+type User {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  author: User! @relation(link: TABLE)
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."_PostToUser" (
+  "A" varchar(25) NOT NULL,
+  "B" varchar(25) NOT NULL
+);
+```
+
+###### Relation table with a custom name (prepended with an underscore)
+
+```graphql
+type User {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  user: User! @relation(link: TABLE, name: "MyRelation")
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."_MyRelation" (
+  "A" varchar(25) NOT NULL,
+  "B" varchar(25) NOT NULL
+);
+```
+
+###### Customized relation table with `@linkTable`
+
+```graphql
+type User {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  user: User! @relation(link: TABLE, name: "MyRelation")
+}
+
+type MyRelation @joinTable {
+  user: User!
+  post: Post!
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."MyRelation" (
+    "post" varchar(25) NOT NULL,
+    "user" varchar(25) NOT NULL
+);
+```
+
 #### n:m relations
+
+##### Inline relation
+
+Not applicable
+
+##### Relation table
+
+###### Generatic relation table
+
+```graphql
+type Category {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  categories: [Category!]! @relation(link: TABLE)
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."_PostToCategory" (
+  "A" varchar(25) NOT NULL,
+  "B" varchar(25) NOT NULL
+);
+```
+
+###### Relation table with a custom name (prepended with an underscore)
+
+```graphql
+type Category {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  categories: [Category!]! @relation(link: TABLE, name: "MyRelation")
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."_MyRelation" (
+  "post" varchar(25) NOT NULL,
+  "category" varchar(25) NOT NULL
+);
+```
+
+###### Customized relation table with `@linkTable`
+
+```graphql
+type Category {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  categories: [Category!]! @relation(link: TABLE, name: "MyRelation")
+}
+
+type MyRelation @joinTable {
+  user: User!
+  post: Post!
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."MyRelation" (
+    "post" varchar(25) NOT NULL,
+    "cagtegory" varchar(25) NOT NULL
+);
+```
 
 ## Migrations and introspection with the Prisma CLI
 
