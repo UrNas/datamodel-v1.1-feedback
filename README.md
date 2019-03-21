@@ -2,6 +2,8 @@
 
 Over the last months, we have worked with the community to define a new [datamodel specification](https://github.com/prisma/prisma/issues/3408) for Prisma. This new version is called datamodel v1.1 and is currently available in an early preview. 
 
+Please help us test the implementation of the new datamodel and share your feedback or report problems by [opening an issue](https://github.com/prisma/datamodel-v1.1-feedback/issues/new) in this repository. 
+
 ## Table of contents
 
 - [Motivation](#motivation)
@@ -685,7 +687,7 @@ To import the data, you need to use the `prisma import` command and point it to 
 prisma import -d ./export-2019-03-21T09:08:48.816Z.zip
 ```
 
-Note that there currently still is a [bug](https://github.com/prisma/datamodel-v1.1-feedback/issues/1) that prevents this from working smoothly.
+Note that there currently still is a [bug](https://github.com/prisma/datamodel-v1.1-feedback/issues/1) that prevents this from working smoothly. One workaround is to just add the `createdAt: DateTime! @createdAt` and `updatedAt: DateTime! @updatedAt` fields to thyour new datamodel. 
 
 ## What's new in datamodel v1.1?
 
