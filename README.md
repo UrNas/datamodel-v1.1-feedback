@@ -800,7 +800,7 @@ The `@createdAt` and `@updatedAt` directives can be applied to any fields of typ
 
 ##### Examples
 
-_The `myCreatedAt` and `myUpdatedAt` fields track the time when a `User` record is created and last updated_
+_The `myCreatedAt` and `myUpdatedAt` fields track the time when a `User` record was created and last updated_
 
 ```graphql
 type User {
@@ -820,7 +820,140 @@ TBD
 
 ### Relations
 
-[Draft](https://gist.github.com/nikolasburk/e02d0fcb1302fddf80ecaf841ca64446)
+> [Draft](https://gist.github.com/nikolasburk/e02d0fcb1302fddf80ecaf841ca64446).
+
+In Prisma, a relation connects two models. A direction can be uni- or bidirectional:
+
+- Unidirectional: Only one model has a relation field to another model
+- Bidirectional: Both models have relation fields to each other
+
+A relation field is a field on a model that has another model as its type. For example, in the following datamodel `author` and `posts` are relation fields that mark a bidirectional relation (1:n) between the `User` and `Post` models:
+
+```graphql
+type User {
+  id: ID! @id
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID! @id
+  author: User!
+}
+```
+
+You can control how a relation is represented in the underlying database via the `@relation` and `@linkTable` directives. A relation can be represented in either of two ways:
+
+- With a _relation table_: Prisma tracks the relation via a dedicated table that contains two columns which refer to the IDs of each model.
+- As an _inline_ relation: Prisma tracks the relation via a foreign key in a column (not available for n:m relations)
+
+#### 1:1 relations
+
+When defining a 1:1 relation between two models, you must add the `@relation` directive to one end of the relation. Otherwise Prisma doesn't know how it should lay out the relation in the underlying database.
+
+##### Inline
+
+```graphql
+type User {
+  id: ID! @id
+  profile: Profile! @relation(link: INLINE)
+}
+
+type Profile {
+  id: ID! @id
+  user: User!
+}
+```
+
+This stores the primary key of `Profile` in the `profile` column on the `User` tables:
+
+```sql
+CREATE TABLE "default$default"."User" (
+    "id" varchar(25) NOT NULL,
+    "profile" varchar(25),
+    PRIMARY KEY ("id")
+);
+```
+
+##### Relation table
+
+###### Generatic relation table
+
+```graphql
+type User {
+  id: ID! @id
+  profile: Profile! @relation(link: TABLE)
+}
+
+type Profile {
+  id: ID! @id
+  user: User!
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."_PostToUser" (
+  "A" varchar(25) NOT NULL,
+  "B" varchar(25) NOT NULL
+);
+```
+
+###### Relation table with a custom name (prepended with an underscore)
+
+```graphql
+type User {
+  id: ID! @id
+  profile: Profile! @relation(link: TABLE, name: "MyRelation")
+}
+
+type Profile {
+  id: ID! @id
+  user: User!
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."_MyRelation" (
+  "A" varchar(25) NOT NULL,
+  "B" varchar(25) NOT NULL
+);
+```
+
+###### Customized relation table
+
+```graphql
+type User {
+  id: ID! @id
+  profile: Profile! @relation(link: TABLE, name: "MyRelation")
+}
+
+type Profile {
+  id: ID! @id
+  user: User!
+}
+
+type MyRelation @joinTable {
+  user: User!
+  profile: Profile!
+}
+```
+
+This creates the following relation table:
+
+```sql
+CREATE TABLE "default$default"."MyRelation" (
+  "post" varchar(25) NOT NULL,
+  "user" varchar(25) NOT NULL
+);
+```
+
+
+#### 1:n relations
+
+#### n:m relations
 
 ## Migrations and introspection with the Prisma CLI
 
