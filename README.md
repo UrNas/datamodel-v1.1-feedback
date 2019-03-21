@@ -164,7 +164,7 @@ type Post @db(name: "post") {
   updatedAt: DateTime! @updatedAt
   author: User!
   published: Boolean! @default(value: false)
-  categories: [Category] @relation(link: TABLE, name: "PostToCategory")
+  categories: [Category!]! @relation(link: TABLE, name: "PostToCategory")
 }
 
 type Category @db(name: "category") {
@@ -406,7 +406,96 @@ To access your data in [Prisma Admin](https://www.prisma.io/docs/prisma-admin/),
 
 ### Option 3: Migrating from datamodel v1.1
 
-TBD
+#### 1. Datamodel v1 setup
+
+Assume you have a deployed Prisma project with the following datamodel:
+
+```graphql
+type User {
+  id: ID! @unique
+  createdAt: DateTime!
+  email: String! @unique
+  name: String
+  role: Role @default(value: "USER")
+  posts: [Post!]!
+  profile: Profile
+}
+
+type Profile {
+  id: ID! @unique
+  user: User!
+  bio: String!
+}
+
+type Post {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
+  published: Boolean! @default(value: "false")
+  categories: [Category!]!
+}
+
+type Category {
+  id: ID! @unique
+  name: String!
+  posts: [Post!]!
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+
+When using the datamodel v1, the following tables are created by Prisma in the underlying database:
+
+- `User`
+- `Profile`
+- `Post`
+- `Category`
+- `_CategoryToPost`
+- `_PostToUser`
+- `_ProfileToUser`
+- `_RelayId`
+
+Each relation is represented via a relation table and the `_RelayId` table to be able to identity any record by its ID. With the datamodel v1, these are Prisma opinionations that can not be worked around.
+
+#### 2. Enable datamodel v1.1
+
+To enable the datamodel v1.1, you need to:
+
+- Use the l[atest beta](https://www.prisma.io/docs/releases-and-maintenance/releases-and-beta-access/installing-the-beta-b5op/) of Prisma
+- Manually [add the `prototype: true` flag](#3-set-the-prototype-flag-to-true-in-prisma_config) to your Docker Compose file
+
+For example, if you have are connecting to a local PostgreSQL database, your updated `docker-compose.yml` might look as follows:
+
+```yml
+version: '3'
+services:
+  prisma:
+    image: prismagraphql/prisma:1.30-beta
+    restart: always
+    ports:
+    - "4466:4466"
+    environment:
+      PRISMA_CONFIG: |
+        port: 4466
+        prototype: true
+        databases:
+          default:
+            connector: postgres
+            host: localhost
+            user: prisma
+            password: prisma
+            port: '5432'    
+```
+
+Once you have specified the `prismagraphql/prisma:1.30-beta` image and introduced the `prototype: true` flag, you can redeploy your Prisma server:
+
+```
+docker-compose up -d
+```
 
 ## What's new in datamodel v1.1?
 
