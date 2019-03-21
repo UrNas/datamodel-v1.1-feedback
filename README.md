@@ -188,12 +188,12 @@ Let's understand some important bits of the datamodel:
 
 - Each model is mapped a table that's named after the model but lowercased using the `@db` directive
 - There are the following relations:
-  - **One-to-one** between `User` and `Profile`
-  - **One-to-many** between `User` and `Post`
-  - **Many-to-many** between `Post` and `Category`
-- The **one-to-one** relation between `User` and `Profile` is annotated with `@relation(link: INLINE)` on the `User` model. This means `user` records in the database have a reference to a `profile` record if the relation is present (because the `profile` field is not required, the relation might just be `NULL`). An alternative to `INLINE` is `TABLE` in which case Prisma would track the relation via a dedicated relation table.
-- The **one-to-many** relation between `User` and `Post` is is tracked inline the relation via the `author` column of the `post` table, i.e. the `@relation(link: INLINE)` directive is inferred on the `author` field of the `Post` model.
-- The **many-to-many** relation between `Post` and `Category` is tracked via a dedicated relation table called `PostToCategory`. This relation table is part of the datamodel and annotated with the `@linkTable` directive.
+  - **1:1** between `User` and `Profile`
+  - **1:n** between `User` and `Post`
+  - **n:m** between `Post` and `Category`
+- The **1:1** relation between `User` and `Profile` is annotated with `@relation(link: INLINE)` on the `User` model. This means `user` records in the database have a reference to a `profile` record if the relation is present (because the `profile` field is not required, the relation might just be `NULL`). An alternative to `INLINE` is `TABLE` in which case Prisma would track the relation via a dedicated relation table.
+- The **1:n** relation between `User` and `Post` is is tracked inline the relation via the `author` column of the `post` table, i.e. the `@relation(link: INLINE)` directive is inferred on the `author` field of the `Post` model.
+- The **n:m** relation between `Post` and `Category` is tracked via a dedicated relation table called `PostToCategory`. This relation table is part of the datamodel and annotated with the `@linkTable` directive.
 - Each model has an `id` field annotated with the `@id` directive.
 - For the `User` model, the database automatically tracks _when_ a record is created via the field annotated with the `@createdAt` directive.
 - For the `Post` model, the database automatically tracks _when_ a record is created and updated via the fields annotated with the `@createdAt` and `@updatedAt` directives.
@@ -538,7 +538,7 @@ To fix the errors that Prisma threw after `prisma deploy`, you need to:
 
 - Use the `@id` directive instead of `@unique` on the `id` fields of your models
 - Remove the quotes around the arguments of the `@default` directives
-- Specify a relation type (_inline_ or _relation table_) on the one-to-one relation between `User` and `Profile` (i.e. add the `@relation` directive with the `link` argument to one end of the relation)
+- Specify a relation type (_inline_ or _relation table_) on the 1:1 relation between `User` and `Profile` (i.e. add the `@relation` directive with the `link` argument to one end of the relation)
 
 Here is the datamodel updated to the new syntax:
 
@@ -617,7 +617,7 @@ datamodel: datamodel.prisma
 
 When creating the new datamodel file, you can copy over your current datamodel and apply the optimizations you want to introduce. In this case, we will:
 
-- Turn the one-to-one relation between `User` and `Profile` into an _inline_ relation tracked via the `User` table
+- Turn the 1:1 relation between `User` and `Profile` into an _inline_ relation tracked via the `User` table
 - Turn the one-to-manby relation between `User` and `Post` into an _inline_ relation tracked via the `Post` table
 
 Here's the datamodel that incorporates these changes, put it into a file called `datamodel.prisma`:
@@ -661,7 +661,7 @@ enum Role {
 }
 ```
 
-> Note that `@relation(link: INLINE)` on `author` could also be omitted since `INLINE` is the default relation type for a one-to-many relation.
+> Note that `@relation(link: INLINE)` on `author` could also be omitted since `INLINE` is the default relation type for a 1:n relation.
 
 With these changes in place, you can deploy the datamodel: 
 
