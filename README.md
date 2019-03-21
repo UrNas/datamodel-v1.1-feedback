@@ -465,7 +465,7 @@ Each relation is represented via a relation table and the `_RelayId` table to be
 
 To enable the datamodel v1.1, you need to:
 
-- Use the l[atest beta](https://www.prisma.io/docs/releases-and-maintenance/releases-and-beta-access/installing-the-beta-b5op/) of Prisma
+- Use the [latest beta](https://www.prisma.io/docs/releases-and-maintenance/releases-and-beta-access/installing-the-beta-b5op/) of Prisma (Prisma server _and_ CLI)
 - Manually [add the `prototype: true` flag](#3-set-the-prototype-flag-to-true-in-prisma_config) to your Docker Compose file
 
 For example, if you have are connecting to a local PostgreSQL database, your updated `docker-compose.yml` might look as follows:
@@ -476,12 +476,12 @@ services:
   prisma:
     image: prismagraphql/prisma:1.30-beta
     restart: always
+    prototype: true
     ports:
     - "4466:4466"
     environment:
       PRISMA_CONFIG: |
         port: 4466
-        prototype: true
         databases:
           default:
             connector: postgres
@@ -496,6 +496,108 @@ Once you have specified the `prismagraphql/prisma:1.30-beta` image and introduce
 ```
 docker-compose up -d
 ```
+
+Now you can install the latest CLI beta, e.g. with npm:
+
+```
+npm install -g prisma@beta
+```
+
+At this point, you can already try to redeploy your Prisma datamodel. It won't work and the CLI will show some errors:
+
+```
+$ prisma deploy
+Deploying service `default` to stage `default` to server `local` 585ms
+
+Errors:
+
+  User
+    ✖ One field of the type `User` must be marked as the id field with the `@id` directive.
+    ✖ The value "USER" is not a valid default for fields of type Enum.
+
+  Profile
+    ✖ One field of the type `Profile` must be marked as the id field with the `@id` directive.
+
+  Post
+    ✖ One field of the type `Post` must be marked as the id field with the `@id` directive.
+    ✖ The value "false" is not a valid default for fields of type Boolean.
+
+  Category
+    ✖ One field of the type `Category` must be marked as the id field with the `@id` directive.
+
+Deployment canceled. Please fix the above errors to continue deploying.
+Read more about deployment errors here: https://bit.ly/prisma-force-flag
+```
+
+#### 3. Migrating to datamodel v1.1 syntax
+
+To fix the errors that Prisma threw after `prisma deploy`, you need to:
+
+- Use the `@id` directive instead of `@unique` on the `id` fields of your models
+- Remove the quotes around the arguments of the `@default` directives
+- Specify a relation type (_inline_ or _relation table_) on the one-to-one relation between `User` and `Profile` (i.e. add the `@relation` directive with the `link` argument to one end of the relation)
+
+Here is the datamodel updated to the new syntax:
+
+```graphql
+type User {
+  id: ID! @id
+  createdAt: DateTime!
+  email: String! @unique
+  name: String
+  role: Role @default(value: USER)
+  posts: [Post!]!
+  profile: Profile @relation(link: TABLE)
+}
+
+type Profile {
+  id: ID! @id
+  user: User!
+  bio: String!
+}
+
+type Post {
+  id: ID! @id
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
+  published: Boolean! @default(value: false)
+  categories: [Category!]!
+}
+
+type Category {
+  id: ID! @id
+  name: String!
+  posts: [Post!]!
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+
+Now you can deploy the datamodel with the new syntax:
+
+```
+prisma deploy
+```
+
+#### 4. Optimizing the database schema
+
+When updating the datamodel syntax to v1.1, the existing database schema will remain the same, therefore keeping the opinionations of the datamodel v1. For example, you can't turn a relation that was represented via a relation table in v1 into an inline relation using the Prisma migration system. 
+
+If you want to optimize your database schema and take advantage of the new features, there are two options:
+
+- Option 1: Export the data from the old project and import it into a new Prisma project where the optimisations are applied
+- Option 2: Manually migrate the database schema and subsequently adjust the datamodel to match it
+
+##### Option 1: Export and import data
+
+
+TBD
+##### Option 2: 
+
 
 ## What's new in datamodel v1.1?
 
@@ -569,5 +671,5 @@ Please report bugs directly [here](https://github.com/prisma/datamodel-v1.1-for-
 We recommend the following:
 
 1. Use `prisma export` to export the data from your existing Prisma project.
-1. Copy your existing Datamodel to a new Prisma project and apply your desired optimisations to your Datamodel.
+1. Copy your existing datamodel to a new Prisma project and apply your desired optimisations to your datamodel.
 1. Use `prisma import` to import the data into your new Prisma project.
