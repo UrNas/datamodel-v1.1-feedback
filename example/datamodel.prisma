@@ -1,4 +1,40 @@
-type User {
+type User @db(name: "user") {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  email: String! @unique
+  name: String
+  role: Role @default(value: USER)
+  posts: [Post!]!
+  profile: Profile @relation(link: INLINE)
+}
+
+type Profile @db(name: "profile") {
+  id: ID! @id
+  user: User!
+  bio: String!
+}
+
+type Post @db(name: "post") {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  author: User!
+  published: Boolean! @default(value: false)
+  categories: [Category!]! @relation(link: TABLE, name: "PostToCategory")
+}
+
+type Category @db(name: "category") {
   id: ID! @id
   name: String!
+  posts: [Post!]! @relation(name: "PostToCategory")
+}
+
+type PostToCategory @db(name: "post_to_category") @linkTable {
+  post: Post
+  category: Category
+}
+
+enum Role {
+  USER
+  ADMIN
 }
