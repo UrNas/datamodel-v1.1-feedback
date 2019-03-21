@@ -822,8 +822,6 @@ See the the [Relations](#relations) section for more info.
 
 ### Relations
 
-> [Draft](https://gist.github.com/nikolasburk/e02d0fcb1302fddf80ecaf841ca64446).
-
 In Prisma, a relation connects two models. A direction can be uni- or bidirectional:
 
 - Unidirectional: Only one model has a relation field to another model
