@@ -532,6 +532,8 @@ Read more about deployment errors here: https://bit.ly/prisma-force-flag
 
 #### 3. Migrating to datamodel v1.1 syntax
 
+> **Note**: In this tutorial, we're updating the tutorial by hand. Alternatively, you can also generate a new datamodel using introspection: `prisma introspect --prototype`
+
 To fix the errors that Prisma threw after `prisma deploy`, you need to:
 
 - Use the `@id` directive instead of `@unique` on the `id` fields of your models
