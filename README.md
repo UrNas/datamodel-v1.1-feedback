@@ -13,7 +13,7 @@ Please help us test the implementation of the new datamodel and share your feedb
   - [Prerequisites](#prerequisites)
   - [Option 1: From scratch](#option-1-from-scratch)
   - [Option 2: With an existing database](#option-2-with-an-existing-database)
-  - [Option 3: Migrating to datamodel v1](#option-3-upgrading-to-datamodel-v11)
+  - [Option 3: Upgrading to datamodel v1](#option-3-upgrading-to-datamodel-v11)
 - [What's new in datamodel v1.1](#whats-new-in-datamodel-v11)
   - [Directives](#directives)
   - [Relations](#relations)
