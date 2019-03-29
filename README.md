@@ -935,7 +935,7 @@ type Profile {
   user: User!
 }
 
-type MyRelation @joinTable {
+type MyRelation @linkTable {
   user: User!
   profile: Profile!
 }
@@ -1048,7 +1048,7 @@ type Post {
   user: User! @relation(link: TABLE, name: "MyRelation")
 }
 
-type MyRelation @joinTable {
+type MyRelation @linkTable {
   user: User!
   post: Post!
 }
@@ -1130,7 +1130,7 @@ type Post {
   categories: [Category!]! @relation(link: TABLE, name: "MyRelation")
 }
 
-type MyRelation @joinTable {
+type MyRelation @linkTable {
   user: User!
   post: Post!
 }
