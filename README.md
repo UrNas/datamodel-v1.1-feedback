@@ -846,6 +846,8 @@ You can control how a relation is represented in the underlying database via the
 - With a _relation table_: Prisma tracks the relation via a dedicated table that contains two columns which refer to the IDs of each model.
 - As an _inline_ relation: Prisma tracks the relation via a foreign key in a column (not available for n:m relations)
 
+> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
+
 #### 1:1 relations
 
 When defining a 1:1 relation between two models, you must add the `@relation` directive to one end of the relation. Otherwise Prisma doesn't know how it should lay out the relation in the underlying database.
@@ -957,6 +959,8 @@ The `@linkTable` directive should be used when you want to:
 
 So you need it in the active case when you want to control that layout. More prominently you need it in the passive case, when you want to connect to an existing database that does not match the prisma conventions.
 
+> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
+
 #### 1:n relations
 
 When defining a 1:n relation between two models, the `@relation` directive is optional. Prisma defaults to an inline relation.
@@ -1063,6 +1067,8 @@ CREATE TABLE "default$default"."MyRelation" (
 );
 ```
 
+> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
+
 #### n:m relations
 
 ##### Inline relation
@@ -1144,6 +1150,8 @@ CREATE TABLE "default$default"."MyRelation" (
     "cagtegory" varchar(25) NOT NULL
 );
 ```
+
+> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
 
 ## Migrations and introspection with the Prisma CLI
 
