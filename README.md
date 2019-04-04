@@ -60,7 +60,7 @@ npm install -g prisma@beta
 In the Docker Compose file for your Prisma server, make sure to use the latest beta Docker image:
 
 ```yml
-prismagraphql/prisma:1.30-beta
+prismagraphql/prisma:1.31-beta
 ```
 
 #### 3. Set the `prototype` flag to `true` in `PRISMA_CONFIG`
@@ -91,7 +91,7 @@ Create a new file callled `docker-compose.yml` and add the following code to it:
 version: '3'
 services:
   prisma:
-    image: prismagraphql/prisma:1.30-beta
+    image: prismagraphql/prisma:1.31-beta
     restart: always
     ports:
     - "4466:4466"
@@ -175,7 +175,7 @@ type Category @db(name: "category") {
   posts: [Post!]! @relation(name: "PostToCategory")
 }
 
-type PostToCategory @db(name: "post_to_category") @linkTable {
+type PostToCategory @db(name: "post_to_category") @relationTable {
   post: Post
   category: Category
 }
@@ -195,7 +195,7 @@ Let's understand some important bits of the datamodel:
   - **n:m** between `Post` and `Category`
 - The **1:1** relation between `User` and `Profile` is annotated with `@relation(link: INLINE)` on the `User` model. This means `user` records in the database have a reference to a `profile` record if the relation is present (because the `profile` field is not required, the relation might just be `NULL`). An alternative to `INLINE` is `TABLE` in which case Prisma would track the relation via a dedicated relation table.
 - The **1:n** relation between `User` and `Post` is is tracked inline the relation via the `author` column of the `post` table, i.e. the `@relation(link: INLINE)` directive is inferred on the `author` field of the `Post` model.
-- The **n:m** relation between `Post` and `Category` is tracked via a dedicated relation table called `PostToCategory`. This relation table is part of the datamodel and annotated with the `@linkTable` directive.
+- The **n:m** relation between `Post` and `Category` is tracked via a dedicated relation table called `PostToCategory`. This relation table is part of the datamodel and annotated with the `@relationTable` directive.
 - Each model has an `id` field annotated with the `@id` directive.
 - For the `User` model, the database automatically tracks _when_ a record is created via the field annotated with the `@createdAt` directive.
 - For the `Post` model, the database automatically tracks _when_ a record is created and updated via the fields annotated with the `@createdAt` and `@updatedAt` directives.
@@ -477,7 +477,7 @@ For example, if you have are connecting to a local PostgreSQL database, your upd
 version: '3'
 services:
   prisma:
-    image: prismagraphql/prisma:1.30-beta
+    image: prismagraphql/prisma:1.31-beta
     restart: always
     prototype: true
     ports:
@@ -494,7 +494,7 @@ services:
             port: '5432'    
 ```
 
-Once you have specified the `prismagraphql/prisma:1.30-beta` image and introduced the `prototype: true` flag, you can redeploy your Prisma server:
+Once you have specified the `prismagraphql/prisma:1.31-beta` image and introduced the `prototype: true` flag, you can redeploy your Prisma server:
 
 ```
 docker-compose up -d
@@ -816,7 +816,7 @@ type User {
 
 See the the [Relations](#relations) section for more info.
 
-#### `@linkTable`
+#### `@relationTable`
 
 See the the [Relations](#relations) section for more info.
 
@@ -843,7 +843,7 @@ type Post {
 }
 ```
 
-You can control how a relation is represented in the underlying database via the `@relation` and `@linkTable` directives. A relation can be represented in either of two ways:
+You can control how a relation is represented in the underlying database via the `@relation` and `@relationTable` directives. A relation can be represented in either of two ways:
 
 - With a _relation table_: Prisma tracks the relation via a dedicated table that contains two columns which refer to the IDs of each model.
 - As an _inline_ relation: Prisma tracks the relation via a foreign key in a column (not available for n:m relations)
@@ -924,7 +924,7 @@ CREATE TABLE "default$default"."_MyRelation" (
 );
 ```
 
-###### Customized relation table with `@linkTable`
+###### Customized relation table with `@relationTable`
 
 ```graphql
 type User {
@@ -952,7 +952,7 @@ CREATE TABLE "default$default"."MyRelation" (
 );
 ```
 
-The `@linkTable` directive should be used when you want to:
+The `@relationTable` directive should be used when you want to:
 
 - remove the underscore in front of the relation name
 - call the foreign key columns in the relation table something else than `A` and `B`
@@ -1037,7 +1037,7 @@ CREATE TABLE "default$default"."_MyRelation" (
 );
 ```
 
-###### Customized relation table with `@linkTable`
+###### Customized relation table with `@relationTable`
 
 ```graphql
 type User {
@@ -1119,7 +1119,7 @@ CREATE TABLE "default$default"."_MyRelation" (
 );
 ```
 
-###### Customized relation table with `@linkTable`
+###### Customized relation table with `@relationTable`
 
 ```graphql
 type Category {

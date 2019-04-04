@@ -29,7 +29,7 @@ type Category @db(name: "category") {
   posts: [Post!]! @relation(name: "PostToCategory")
 }
 
-type PostToCategory @db(name: "post_to_category") @linkTable {
+type PostToCategory @db(name: "post_to_category") @relationTable {
   post: Post
   category: Category
 }
