@@ -593,7 +593,7 @@ prisma deploy
 ```
 
 <Details>
-<Summary>Alternative: Fix errors manually instead of using introspeciton</Summary>
+<Summary>Alternative: Fix errors manually instead of using introspection</Summary>
 
 To fix the errors that Prisma threw after `prisma deploy`, you need to:
 
