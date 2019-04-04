@@ -534,7 +534,66 @@ Read more about deployment errors here: https://bit.ly/prisma-force-flag
 
 #### 3. Migrating to datamodel v1.1 syntax
 
-> **Note**: In this tutorial, we're updating the tutorial by hand. Alternatively, you can also generate a new datamodel using introspection: `prisma introspect --prototype`
+To update your datamodel and get rid of the previous errors, you can use the `prisma introspect` command. Inside your project directory, run:
+
+```
+prisma introspect --prototype
+```
+
+This introspects your database schema and generates a new datamodel file that uses v1.1 syntax. The new file is called `datamodel-prototype-TIMESTAMP.prisma`, e.g. `datamodel-prototype-1554394432089.prisma`. For the example from above, the following datamodel is generated:
+
+```graphql
+type User {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  name: String
+  email: String! @unique
+  role: Role @default(value: USER)
+  posts: [Post]
+  profile: Profile @relation(link: TABLE)
+}
+
+type Profile {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  user: User!
+  bio: String!
+}
+
+type Post {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  title: String!
+  published: Boolean! @default(value: false)
+  author: User! @relation(link: TABLE)
+  categories: [Category]
+}
+
+type Category {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  name: String!
+  posts: [Post]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+
+You can now upgrade the datamodel of your running Prisma service:
+
+```
+prisma deploy
+```
+
+<Details>
+<Summary>Alternative: Fix errors manually instead of using introspeciton</Summary>
 
 To fix the errors that Prisma threw after `prisma deploy`, you need to:
 
@@ -588,6 +647,9 @@ Now you can deploy the datamodel with the new syntax:
 ```
 prisma deploy
 ```
+
+
+</Details>
 
 #### 4. Optimizing the database schema
 
@@ -846,8 +908,6 @@ You can control how a relation is represented in the underlying database via the
 - With a _relation table_: Prisma tracks the relation via a dedicated table that contains two columns which refer to the IDs of each model.
 - As an _inline_ relation: Prisma tracks the relation via a foreign key in a column (not available for n:m relations)
 
-> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
-
 #### 1:1 relations
 
 When defining a 1:1 relation between two models, you must add the `@relation` directive to one end of the relation. Otherwise Prisma doesn't know how it should lay out the relation in the underlying database.
@@ -937,7 +997,7 @@ type Profile {
   user: User!
 }
 
-type MyRelation @linkTable {
+type MyRelation @relationTable {
   user: User!
   profile: Profile!
 }
@@ -958,8 +1018,6 @@ The `@relationTable` directive should be used when you want to:
 - call the foreign key columns in the relation table something else than `A` and `B`
 
 So you need it in the active case when you want to control that layout. More prominently you need it in the passive case, when you want to connect to an existing database that does not match the prisma conventions.
-
-> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
 
 #### 1:n relations
 
@@ -1052,7 +1110,7 @@ type Post {
   user: User! @relation(link: TABLE, name: "MyRelation")
 }
 
-type MyRelation @linkTable {
+type MyRelation @relationTable {
   user: User!
   post: Post!
 }
@@ -1066,8 +1124,6 @@ CREATE TABLE "default$default"."MyRelation" (
     "user" varchar(25) NOT NULL
 );
 ```
-
-> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
 
 #### n:m relations
 
@@ -1136,7 +1192,7 @@ type Post {
   categories: [Category!]! @relation(link: TABLE, name: "MyRelation")
 }
 
-type MyRelation @linkTable {
+type MyRelation @relationTable {
   user: User!
   post: Post!
 }
@@ -1150,8 +1206,6 @@ CREATE TABLE "default$default"."MyRelation" (
     "cagtegory" varchar(25) NOT NULL
 );
 ```
-
-> **Note:** The `@linkTable` directive will soon be renamed to `@relationTable`.
 
 ## Migrations and introspection with the Prisma CLI
 
