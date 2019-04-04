@@ -668,7 +668,7 @@ To export the data, you can run the following command (inside the directory wher
 prisma export
 ```
 
-This creates the following file: `export-TIMESTAMP.zip`, where `TIMESTAMPT` represents the time of the export, e.g. `export-2019-03-21T09:08:48.816Z.zip`.
+This creates the following file: `export-TIMESTAMP.zip`, where `TIMESTAMP` represents the time of the export, e.g. `export-2019-03-21T09:08:48.816Z.zip`.
 
 ##### 4.2. Optimize the database schema
 
